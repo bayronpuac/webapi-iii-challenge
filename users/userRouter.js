@@ -15,13 +15,15 @@ router.post('/', validateUser,  (req, res) => {
 });
 
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
-    userDb
+   console.log(req.body);
+    postDb
     .insert(req.body)
     .then(post => {
+        console.log(post)
         res.status(201).json(post)
     })
-    .catch(() => {
-        res.status(500).json({ message: "There was an error adding the post to the database." })
+    .catch(err => {
+        res.status(500).json({ message: "There was an error adding the post to the database.", err })
     })
 
 });
@@ -93,11 +95,14 @@ router.put('/:id', validateUserId,validateUserId, (req, res) => {
 
 function validateUserId(req, res, next) {
 const {id} = req.params;
-  if(Number(id)){
-      next();
-  } else {
-      res.status(400).json({message: 'Invalid User id'})
-  } 
+  userDb.getById(id)
+  .then( user => {
+    if(user) {
+        next();
+    } else {
+        res.status(400).json({message: 'Invalid User id'})
+    } 
+  })
 };
 
 function validateUser(req, res, next) {
@@ -112,7 +117,7 @@ function validateUser(req, res, next) {
 
 function validatePost(req, res, next) {
     if (req.body) {
-        console.log(req.body)
+        req.body.user_id = req.params.id
          next();
     } else if (!req.body.text) {
         res.status(400).json({ message: "missing required text field" })
