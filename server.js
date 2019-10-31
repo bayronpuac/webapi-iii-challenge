@@ -12,25 +12,25 @@ function logger(prefix){
 }
 
 
-function gateKeeper(req, res, next) {
- const password = req.headers.password || '';
- if( password.toLowerCase() === '') {
-   res.status(400).json({
-     error: "please provide a password"
-   })
- } else if(password.toLowerCase() === 'mellon'){
-   next();
- } else {
-   res.status(401).json({
-     you: "cannot pass!!"
-   })
- }
-}
+// function gateKeeper(req, res, next) {
+//  const password = req.headers.password || '';
+//  if( password.toLowerCase() === '') {
+//    res.status(400).json({
+//      error: "please provide a password"
+//    })
+//  } else if(password.toLowerCase() === 'mellon'){
+//    next();
+//  } else {
+//    res.status(401).json({
+//      you: "cannot pass!!"
+//    })
+//  }
+// }
 
 
 server.use(helmet());
 server.use(express.json());
-server.use(gateKeeper);
+// server.use(gateKeeper);
 server.use('/user' , logger('Logger for posts: '), router);
 
 server.get('/', (req, res) => {
